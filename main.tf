@@ -1,3 +1,13 @@
+variable "instance_type"{
+    description = "EC2 instance type"
+    type = string
+}
+
+variable "ami_id"{
+    description = "EC2 instance type"
+    type = string
+}
+
 provider "aws"{
     region = "us-east-1"
 }
@@ -66,8 +76,8 @@ resource "aws_security_group" "dev_allow_ssh"{
 }
 
 resource "aws_instance" "public_dev_server"{
-    ami = "ami-0f3caa1cf4417e51b"
-    instance_type = "t3.micro"
+    ami = var.ami_id
+    instance_type = var.instance_type
     subnet_id = aws_subnet.development_subnet_public.id
     security_groups = [aws_security_group.dev_allow_ssh.id]
     associate_public_ip_address = true
@@ -77,8 +87,8 @@ resource "aws_instance" "public_dev_server"{
 }
 
 resource "aws_instance" "private_dev_server"{
-    ami = "ami-0f3caa1cf4417e51b"
-    instance_type = "t3.micro"
+    ami = var.ami_id
+    instance_type = var.instance_type
     subnet_id = aws_subnet.development_subnet_private.id
     security_groups = [aws_security_group.dev_allow_ssh.id]
     tags = {
