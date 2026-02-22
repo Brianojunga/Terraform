@@ -96,6 +96,52 @@ resource "aws_instance" "private_dev_server"{
     }
 }
 
+resource "aws_s3_bucket" "development_bucket"{
+    bucket = "development-bucket-0200100"
+    force_destroy = true
+
+    tags = {
+        Name = "Development Bucket"
+    }
+}
+
+#enable versioning
+resource "aws_s3_bucket_versioning" "versioning"{
+    bucket = aws_s3_bucket.development_bucket.id
+    versioning_configuration {
+      status = "Enabled"
+    }
+}
+
+#block public access
+resource "aws_s3_bucket_public_access_block" "block_public" {
+    bucket = aws_s3_bucket.development_bucket.id
+
+    block_public_acls       = true
+    block_public_policy     = true
+    ignore_public_acls      = true
+    restrict_public_buckets = true
+}
+
+#S3 endpoint
+resource "aws_vpc_endpoint" "s3_endpoint" {
+    vpc_id = aws_vpc.development_vpc.id
+    service_name = "com.amazonaws.us-east-1.s3"
+    vpc_endpoint_type = "Gateway"
+
+    route_table_ids = [
+        aws_route_table.dev_route_table.id
+    ]
+
+    tags = {
+        Name = "S3 VPC Endpoint"
+    }
+}
+
 output "dev_server_public_ip"{
     value = aws_instance.public_dev_server.public_ip
+}
+
+output "s3_bucket_id"{
+    value = aws_s3_bucket.development_bucket.id
 }
