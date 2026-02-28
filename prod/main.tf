@@ -97,7 +97,7 @@ resource "aws_instance" "private_dev_server"{
 }
 
 resource "aws_s3_bucket" "development_bucket"{
-    bucket = "development-bucket-0200100"
+    bucket = "development-bucket-020010072"
     force_destroy = true
 
     tags = {
